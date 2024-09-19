@@ -23,12 +23,23 @@ class Kernel extends HttpKernel
     ];
 
     protected $middlewareGroups = [
+
+        'web' => [
+            // Other middleware
+        ],
+
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'admin' => [
+            'auth:sanctum',
+            'is_admin',
+        ],
     ];
+
 
 
     /**
