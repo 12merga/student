@@ -9,7 +9,7 @@ class AddRoleIdToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            // Add the role_id column if it does not exist
+
             if (!Schema::hasColumn('users', 'role_id')) {
                 $table->unsignedBigInteger('role_id')->after('password');
                 $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');

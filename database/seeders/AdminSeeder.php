@@ -12,18 +12,15 @@ class AdminSeeder extends Seeder
 {
     public function run()
     {
-        // Find or create the 'admin' role
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
-        // Check if admin user already exists
         $adminUser = User::where('email', 'admin@example.com')->first();
 
         if (!$adminUser) {
-            // Create an admin user if it doesn't exist
             User::create([
-                'name' => 'Admin User',
+                'name' => 'Admin',
                 'email' => 'admin@example.com',
-                'password' => Hash::make('adminpassword'),
+                'password' => Hash::make('password'),
                 'role_id' => $adminRole->id,
             ]);
         }

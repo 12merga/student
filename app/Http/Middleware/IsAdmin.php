@@ -15,6 +15,6 @@ class IsAdmin
             return $next($request);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 403);
+        return redirect('/');
     }
 }

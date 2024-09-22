@@ -14,17 +14,22 @@ class ParentModel extends Model
         'middle_name',
         'last_name',
         'student_first_name',
-        'student_middle_name',
         'student_last_name',
+        'student_middle_name',
         'student_id',
         'phone_number',
         'email',
         'password',
-        'approved',
+        'is_approved',
     ];
 
-    // Hide the password and sensitive fields
     protected $hidden = [
         'password',
     ];
+
+    // Define relationship with Student
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

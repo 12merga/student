@@ -33,6 +33,10 @@ class TeacherController extends Controller
         ]);
 
         // Hash the password
+
+        $uniqueId = uniqid();
+        $teachersId = strtoupper($request->subject . '-' . $uniqueId);
+
         $validated['password'] = Hash::make($validated['password']);
 
         $teacher = Teacher::create($validated);
@@ -48,6 +52,8 @@ class TeacherController extends Controller
             'email' => $request->email,
             'subject' => $request->subject,
             'password' => bcrypt($request->password),
+            'teachersId' => $teachersId,
+
         ]);
 
         return redirect()->route('teachers.index')->with('success', 'Teacher created successfully.');
@@ -72,6 +78,9 @@ class TeacherController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
+        $uniqueId = uniqid();
+        $teachersId = strtoupper($request->subject . '-' . $uniqueId);
+
         $teacher = Teacher::findOrFail($id);
         $teacher->update([
             'first_name' => $request->first_name,
@@ -82,6 +91,8 @@ class TeacherController extends Controller
             'email' => $request->email,
             'subject' => $request->subject,
             'password' => $request->password ? bcrypt($request->password) : $teacher->password,
+            'teachersId' => $teachersId,
+
         ]);
 
         return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully.');

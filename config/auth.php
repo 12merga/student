@@ -46,9 +46,14 @@ return [
             'provider' => 'users',
         ],
 
+        'parent' => [
+            'driver' => 'session',
+            'provider' => 'parents',
+        ],
+
 
     ],
-
+    
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -72,10 +77,10 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'parents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ParentModel::class,
+        ],
     ],
 
     /*
