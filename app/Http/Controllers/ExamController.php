@@ -53,8 +53,11 @@ class ExamController extends Controller
 
     public function index()
     {
-        $examSchedules = ExamSchedule::with('teacher', 'students')->get();
-        return response()->json($examSchedules);
+        $schedules = ExamSchedule::all();
+
+        return response()->json([
+            'exam_schedules' => $schedules,
+        ]);
     }
 
     public function update(Request $request, ExamSchedule $exam)

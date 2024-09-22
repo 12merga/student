@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function login(Request $request)
     {
-        $teachers = Teacher::all();
-        return view('teachers.index', compact('teachers'));
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('teacher')->attempt($credentials)) {
+            $teacher = Auth::guard('teacher')->user();
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
 
-    public function create()
-    {
-        return view('teachers.register');
-    }
 
     public function store(Request $request)
     {
