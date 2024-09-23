@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // 'providers' => [
+    //     // Other service providers
+    //     Illuminate\Filesystem\FilesystemServiceProvider::class,
+    //     Laravel\Sanctum\SanctumServiceProvider::class,
+    //     Illuminate\Cache\CacheServiceProvider::class,
+
+
+    //     // ...
+    // ],
+
 ];

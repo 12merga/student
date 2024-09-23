@@ -12,17 +12,13 @@ class AdminSeeder extends Seeder
 {
     public function run()
     {
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole = Role::where('name', 'admin')->first();
 
-        $adminUser = User::where('email', 'admin@example.com')->first();
-
-        if (!$adminUser) {
-            User::create([
-                'name' => 'Admin',
-                'email' => 'admin@example.com',
-                'password' => Hash::make('password'),
-                'role_id' => $adminRole->id,
-            ]);
-        }
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role_id' => $adminRole->id
+        ]);
     }
 }

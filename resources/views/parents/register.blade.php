@@ -2,9 +2,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Parent Registration</h1>
-
-    <form method="POST" action="{{ route('parents.create') }}">
+<div class="container">
+    <h2>Parent Registration</h2>
+    <form method="POST" action="{{ route('parents.register') }}">
         @csrf
 
         <div class="form-group">
@@ -23,11 +23,11 @@
         </div>
 
         <div class="form-group">
-            <label for="student_id">Student</label>
-            <select name="student_id" id="student_id" class="form-control" required>
-                <option value="">Select Student</option>
-                @foreach ($students as $student)
-                    <option value="{{ $student->id }}">{{ $student->first_name }} {{ $student->last_name }}</option>
+            <label for="student">Select Student</label>
+            <select name="student_id" id="student" class="form-control" required>
+                <option value="">-- Select Student --</option>
+                @foreach($students as $student)
+                    <option value="{{ $student->id }}">{{ $student->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -71,13 +71,13 @@
     </form>
 
     @if ($errors->any())
-    <div>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+</div>
 @endsection

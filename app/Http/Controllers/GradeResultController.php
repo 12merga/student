@@ -31,7 +31,6 @@ class GradeResultController extends Controller
             'final' => 'required|numeric',
         ]);
 
-        // Calculate total
         $total = $request->test1 + $request->assignment + $request->test2 + $request->final;
 
         GradeResult::create([

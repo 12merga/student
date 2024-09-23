@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,13 @@ class IsAdmin
             return $next($request);
         }
 
-        return redirect('/');
+        $role = 'admin'; // Define the role name
+        $roleId = Role::where('name', $role)->value('id');        
+
+        if (Auth::user()->role_id !== $roleId) {
+            return redirect('/'); // Redirect to home if user doesn't have the right role
+        }
+
+        return $next($request);
     }
 }

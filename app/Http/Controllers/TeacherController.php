@@ -9,17 +9,41 @@ use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
+
+    public function index()
+    {
+        $teachers = Teacher::all();
+        return view('teachers.index', compact('teachers'));
+    }
+
+    // Show form to create a new teacher
+    public function create()
+    {
+        return view('teachers.create');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('teacher')->attempt($credentials)) {
-            $teacher = Auth::guard('teacher')->user();
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return redirect()->route('teacher.dashboard');
         }
+
+        return back()->withErrors(['message' => 'Invalid credentials']);
     }
 
+
+    public function dashboard()
+    {
+        return view('teacher.dashboard');
+    }
+
+
+    private function generateTeacherPassword($firstName, $subject)
+    {
+        return strtolower($firstName) . ucfirst($subject); // e.g., johnMath
+    }
 
     public function store(Request $request)
     {
@@ -36,6 +60,7 @@ class TeacherController extends Controller
 
         // Hash the password
 
+        
         $uniqueId = uniqid();
         $teachersId = strtoupper($request->subject . '-' . $uniqueId);
 
@@ -45,6 +70,9 @@ class TeacherController extends Controller
 
         return response()->json($teacher, 201);
 
+        $generatedPassword = $this->generateTeacherPassword($validatedData['first_name'], $validatedData['subject']);
+        $hashedPassword = Hash::make($generatedPassword); // Hash the generated password
+
         Teacher::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -53,7 +81,7 @@ class TeacherController extends Controller
             'phone_number' => $request->phone_number,
             'email' => $request->email,
             'subject' => $request->subject,
-            'password' => bcrypt($request->password),
+            'password' => Hash::make($generatedPassword),
             'teachersId' => $teachersId,
 
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,17 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    public function index()
+    {
+        $students = Student::all();
+        return view('students.index', compact('students'));
+    }
+
+    public function create()
+    {
+        return view('students.create');
+    }
+
     public function dashboard()
     {
         $student = Auth::guard('student')->user();
@@ -23,23 +35,27 @@ class StudentController extends Controller
             'performances' => $performances,
             'events' => $events,
         ]);
+
+        return view('student.dashboard');
     }
+
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('student_id', 'password');
 
         if (Auth::guard('student')->attempt($credentials)) {
-            $student = Auth::guard('student')->user();
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return redirect()->route('student.dashboard');
         }
+
+        return back()->withErrors(['message' => 'Invalid credentials']);
     }
+
 
     public function viewGrades()
     {
         $student = Auth::guard('student')->user();
-        $grades = $student->results; // Adjust based on your results relationship
+        $grades = $student->results;
 
         return response()->json([
             'grades' => $grades,
@@ -49,7 +65,7 @@ class StudentController extends Controller
     public function viewPerformances()
     {
         $student = Auth::guard('student')->user();
-        $performances = $student->performances; // Adjust based on your performances relationship
+        $performances = $student->performances;
 
         return response()->json([
             'performances' => $performances,
@@ -87,16 +103,6 @@ class StudentController extends Controller
         }
     }
 
-    public function index()
-    {
-        $students = Student::all();
-        return view('students.index', compact('students'));
-    }
-
-    public function create()
-    {
-        return view('students.create');
-    }
 
     private function getUpcomingEvents()
     {
@@ -119,6 +125,7 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'age' => 'required|integer',
             'email' => 'required|email|unique:students',
+            'password' => 'required|string|min:8|confirmed',
             'class' => 'required|string',
         ]);
 
@@ -126,6 +133,8 @@ class StudentController extends Controller
 
         return response()->json($student, 201);
 
+        $studentId = $this->generateStudentId($request->class);
+        $hashedPassword = Hash::make($validatedData['password']);
 
         Student::create([
             'student_id' => $request->student_id,
@@ -135,12 +144,23 @@ class StudentController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'age' => $request->age,
             'email' => $request->email,
+            'password' => Hash::make($validatedData['password']),
             'class' => $request->class,
 
         ]);
 
-        return redirect()->route('students.index')->with('success', 'Student registered successfully.');
+        Student::create($request->all());
+        return redirect()->route('students.index')->with('success', 'Student registered successfully!');
     }
+
+
+    private function generateStudentId($class)
+    {
+        $randomDigits = mt_rand(1000, 9999);
+        return 'ST/' . $randomDigits . '/' . strtoupper($class);
+    }
+
+
 
     public function edit($id)
     {

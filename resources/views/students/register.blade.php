@@ -29,6 +29,13 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <br>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="form-control" required>
+        <br>
+    
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+        <br>
         <label for="class">Class:</label>
         <input type="text" id="class" name="class" required>
         <br>

@@ -1,50 +1,28 @@
- 
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>Hello, {{ auth()->user()->name }}!</p>
 
-@section('content')
-<div class="container">
-    <h1>Welcome, {{ Auth::guard('parent')->user()->first_name }}!</h1>
+        <h2>Your Child's Information</h2>
+        <ul>
+            @foreach($students as $student)
+            <li>
+            <li><a href="{{ route('parents.grades', ['student_id' => auth()->user()->student_id]) }}">View Grades</a></li>
+            <li><a href="{{ route('parents.performance', ['student_id' => auth()->user()->student_id]) }}">View Performance</a></li>
+            <a href="{{ route('parents.paymentStatus', $student->id) }}">Payment Status</a>
+            </li>
+        @endforeach
+        </ul>
 
-    <h2>Student: {{ $student->first_name }} {{ $student->last_name }}</h2>
+        <a href="{{ route('auth.logout') }}" class="btn btn-danger">Logout</a>
+    </div>
+</body>
+</html>
 
-    <h3>Grade Results</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Test 1</th>
-                <th>Assignment</th>
-                <th>Test 2</th>
-                <th>Final</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($grades as $grade)
-                <tr>
-                    <td>{{ $grade->test_1 }}</td>
-                    <td>{{ $grade->assignment }}</td>
-                    <td>{{ $grade->test_2 }}</td>
-                    <td>{{ $grade->final }}</td>
-                    <td>{{ $grade->total }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <h3>Performance</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($performances as $performance)
-                <tr>
-                    <td>{{ $performance->description }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endsection

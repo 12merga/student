@@ -21,6 +21,7 @@
                 <th>Date of Birth</th>
                 <th>Age</th>
                 <th>Email</th>
+                <th>Password</th>
                 <th>Class</th>
                 <th>Actions</th>
             </tr>
@@ -35,6 +36,7 @@
                     <td>{{ $student->DoB }}</td>
                     <td>{{ $student->age }}</td>
                     <td>{{ $student->email }}</td>
+                    <td>{{ $student->password }}</td>
                     <td>{{ $student->class }}</td>
                     <td>
                         <a href="{{ route('students.edit', $student->id) }}" class="btn btn-warning">Edit</a>
