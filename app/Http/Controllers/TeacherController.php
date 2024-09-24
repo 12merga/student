@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\GradeResult;
 use Illuminate\Http\Request;
+use App\Models\StudentPerformance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
-
     public function index()
     {
         $teachers = Teacher::all();
@@ -33,12 +35,10 @@ class TeacherController extends Controller
         return back()->withErrors(['message' => 'Invalid credentials']);
     }
 
-
     public function dashboard()
     {
         return view('teacher.dashboard');
     }
-
 
     private function generateTeacherPassword($firstName, $subject)
     {
@@ -58,35 +58,10 @@ class TeacherController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Hash the password
-
-        
-        $uniqueId = uniqid();
-        $teachersId = strtoupper($request->subject . '-' . $uniqueId);
-
         $validated['password'] = Hash::make($validated['password']);
-
         $teacher = Teacher::create($validated);
 
         return response()->json($teacher, 201);
-
-        $generatedPassword = $this->generateTeacherPassword($validatedData['first_name'], $validatedData['subject']);
-        $hashedPassword = Hash::make($generatedPassword); // Hash the generated password
-
-        Teacher::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'middle_name' => $request->middle_name,
-            'title' => $request->title,
-            'phone_number' => $request->phone_number,
-            'email' => $request->email,
-            'subject' => $request->subject,
-            'password' => Hash::make($generatedPassword),
-            'teachersId' => $teachersId,
-
-        ]);
-
-        return redirect()->route('teachers.index')->with('success', 'Teacher created successfully.');
     }
 
     public function edit($id)
@@ -108,9 +83,6 @@ class TeacherController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $uniqueId = uniqid();
-        $teachersId = strtoupper($request->subject . '-' . $uniqueId);
-
         $teacher = Teacher::findOrFail($id);
         $teacher->update([
             'first_name' => $request->first_name,
@@ -121,8 +93,6 @@ class TeacherController extends Controller
             'email' => $request->email,
             'subject' => $request->subject,
             'password' => $request->password ? bcrypt($request->password) : $teacher->password,
-            'teachersId' => $teachersId,
-
         ]);
 
         return redirect()->route('teachers.index')->with('success', 'Teacher updated successfully.');
@@ -134,5 +104,56 @@ class TeacherController extends Controller
         $teacher->delete();
 
         return redirect()->route('teachers.index')->with('success', 'Teacher deleted successfully.');
+    }
+
+    // ------------- New Methods for Grades and Performance --------------
+
+    // Assign grades to a student
+    public function assignGrade(Request $request, $studentId)
+    {
+        $request->validate([
+            'test_1' => 'required|numeric',
+            'assignment' => 'required|numeric',
+            'test_2' => 'required|numeric',
+            'final' => 'required|numeric',
+        ]);
+
+        // Calculate total score
+        $total = $request->test_1 + $request->assignment + $request->test_2 + $request->final;
+
+        // Find student
+        $student = Student::findOrFail($studentId);
+
+        // Save grade results
+        $gradeResult = new GradeResult();
+        $gradeResult->student_id = $student->id;
+        $gradeResult->test_1 = $request->test_1;
+        $gradeResult->assignment = $request->assignment;
+        $gradeResult->test_2 = $request->test_2;
+        $gradeResult->final = $request->final;
+        $gradeResult->total = $total;
+        $gradeResult->teacher_id = Auth::guard('teacher')->id(); // Save teacher's ID
+        $gradeResult->save();
+
+        return response()->json(['message' => 'Grade assigned successfully.', 'total' => $total]);
+    }
+
+    // Record student performance
+    public function recordPerformance(Request $request, $studentId)
+    {
+        $request->validate([
+            'student_name' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        $student = Student::findOrFail($studentId);
+        $performance = new StudentPerformance();
+        $performance->student_id = $student->id;
+        $performance->student_name = $request->student_name;
+        $performance->description = $request->description;
+        $performance->teacher_id = Auth::guard('teacher')->id();
+        $performance->save();
+
+        return response()->json(['message' => 'Performance recorded successfully.']);
     }
 }

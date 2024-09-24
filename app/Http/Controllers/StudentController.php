@@ -72,29 +72,6 @@ class StudentController extends Controller
         ]);
     }
 
-    // public function login(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required|string|min:6',
-    //     ]);
-
-    //     $credentials = $request->only('email', 'password');
-
-    //     if (Auth::guard('student')->attempt($credentials)) {
-    //         $student = Auth::guard('student')->user();
-    //         $token = $student->createToken('StudentToken')->plainTextToken;
-
-    //         return response()->json([
-    //             'message' => 'Login successful',
-    //             'token' => $token,
-    //             'student' => $student,
-    //         ], 200);
-    //     } else {
-    //         return response()->json(['error' => 'Unauthorized'], 401);
-    //     }
-    // }
-
     public function __construct()
     {
         if (Auth::guard('admin')->check()) {

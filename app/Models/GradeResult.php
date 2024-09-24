@@ -28,4 +28,9 @@ class GradeResult extends Model
     {
         return $this->belongsTo(ParentModel::class);
     }
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
 }

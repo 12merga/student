@@ -13,27 +13,27 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+        return view('auth.login.');
     }
 
-     
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-    
+
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('Personal Access Token')->plainTextToken;
-    
+
             return response()->json([
                 'token' => $token,
                 'user' => $user,
             ], 200);
         }
-    
+
         return response()->json(['error' => 'Unauthorized'], 401);
     }
-    
+
 
 
     public function dashboard()
@@ -52,5 +52,3 @@ class AuthController extends Controller
         return redirect('/login');
     }
 }
-
-   
